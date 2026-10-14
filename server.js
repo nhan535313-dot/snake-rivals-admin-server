@@ -668,3 +668,10 @@ server.listen(PORT, "0.0.0.0", () => {
     );
   }
 });
+<audio id="gameMusic" loop>
+  <source src="/music.mp3" type="audio/mpeg">
+</audio>
+
+<button onclick="document.getElementById('gameMusic').play()">
+  🎵 Bật nhạc
+</button>
