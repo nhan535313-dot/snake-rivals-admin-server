@@ -1,0 +1,126 @@
+<!DOCTYPE html><html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Snake Rivals 3D - Admin</title>
+<style>
+body{font-family:Arial,sans-serif;background:#101827;color:#fff;margin:0;padding:20px}
+main{max-width:600px;margin:auto}
+section{background:#1e293b;padding:18px;border-radius:12px;margin:14px 0}
+input,button{box-sizing:border-box;width:100%;padding:12px;margin:6px 0;border:0;border-radius:8px}
+button{background:#22c55e;color:#06200f;font-weight:bold}
+.danger{background:#ef4444;color:white}
+.room{background:#334155;padding:12px;border-radius:8px;margin:8px 0;overflow-wrap:anywhere}
+small{color:#cbd5e1}
+</style>
+</head>
+<body>
+<main>
+<h1>🐍 Snake Rivals 3D</h1>
+<h2>Admin Dashboard</h2>
+<section>
+<h3>Đăng nhập Admin</h3>
+<input id="password" type="password" placeholder="Mật khẩu ADMIN_PASSWORD">
+<button onclick="login()">Đăng nhập</button>
+<p id="status">Chưa đăng nhập</p>
+</section>
+<section id="panel" hidden>
+<h3>Tạo phòng chơi</h3>
+<input id="roomName" placeholder="Tên phòng">
+<button onclick="createRoom()">+ Tạo phòng</button>
+<h3>Danh sách phòng</h3>
+<button onclick="loadRooms()">Làm mới danh sách</button>
+<div id="rooms">Đang tải...</div>
+</section>
+</main>
+<script>
+let adminPassword = "";async function api(path, options = {}) {
+const response = await fetch(path, {
+...options,
+headers: {
+"Content-Type": "application/json",
+"x-admin-password": adminPassword,
+...(options.headers || {})
+}
+});
+const data = await response.json().catch(() => ({}));
+if (!response.ok) throw new Error(data.error || "Có lỗi xảy ra");
+return data;
+}
+
+async function login() {
+adminPassword = document.getElementById("password").value;
+try {
+await api("/api/admin/rooms", {
+method: "POST",
+body: JSON.stringify({ name: "test" })
+}).then(async data => {
+if (data.room) {
+await api("/api/admin/rooms/" + data.room.id, {
+method: "DELETE"
+});
+}
+});
+document.getElementById("panel").hidden = false;
+document.getElementById("status").textContent = "Đăng nhập thành công!";
+loadRooms();
+} catch (error) {
+document.getElementById("status").textContent =
+"Không đăng nhập được: " + error.message;
+}
+}
+
+async function createRoom() {
+try {
+const name = document.getElementById("roomName").value.trim() || "Phòng mới";
+const data = await api("/api/admin/rooms", {
+method: "POST",
+body: JSON.stringify({ name })
+});
+document.getElementById("roomName").value = "";
+alert("Đã tạo phòng: " + data.room.id);
+loadRooms();
+} catch (error) {
+alert(error.message);
+}
+}
+
+async function loadRooms() {
+const container = document.getElementById("rooms");
+try {
+const rooms = await api("/api/rooms");
+container.replaceChildren();
+if (!rooms.length) {
+container.textContent = "Chưa có phòng nào.";
+return;
+}
+for (const room of rooms) {
+const item = document.createElement("div");
+item.className = "room";
+const title = document.createElement("strong");
+title.textContent = room.name + " — " + room.id;
+const detail = document.createElement("p");
+detail.textContent = "Người chơi: " + room.players;
+const close = document.createElement("button");
+close.className = "danger";
+close.textContent = "Đóng phòng";
+close.onclick = async () => {
+if (!confirm("Đóng phòng " + room.id + "?")) return;
+try {
+await api("/api/admin/rooms/" + room.id, { method: "DELETE" });
+loadRooms();
+} catch (error) {
+alert(error.message);
+}
+};
+item.append(title, detail, close);
+container.append(item);
+}
+} catch (error) {
+container.textContent = error.message;
+}
+}
+</script>
+
+</body>
+</html>
