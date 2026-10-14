@@ -4,150 +4,402 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0b1020">
   <title>Snake Rivals 3D — Admin</title>
+
   <style>
-    * { box-sizing: border-box; }
+    :root {
+      --bg: #0b1020;
+      --panel: #151d30;
+      --panel2: #101729;
+      --border: #2b3853;
+      --text: #f4f7ff;
+      --muted: #a9b7d0;
+      --green: #77f0bd;
+      --red: #ff6978;
+      --blue: #7db5ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
-      padding: 20px;
-      background: #10131b;
-      color: #f4f6ff;
-      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      padding: 16px;
+      background:
+        radial-gradient(ellipse at top, #1a2948 0%, transparent 60%),
+        var(--bg);
+      color: var(--text);
+      font-family: system-ui, Arial, sans-serif;
     }
 
     main {
       width: 100%;
-      max-width: 850px;
+      max-width: 900px;
       margin: auto;
     }
 
-    section {
-      background: #1a2030;
-      border: 1px solid #30394e;
-      border-radius: 14px;
-      padding: 18px;
-      margin: 16px 0;
+    header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 8px 0 20px;
     }
 
-    h1 { color: #77f0bd; }
-    h2 { font-size: 20px; }
+    .logo {
+      display: grid;
+      place-items: center;
+      width: 55px;
+      height: 55px;
+      flex-shrink: 0;
+      background: #20354a;
+      border: 1px solid #3d6a69;
+      border-radius: 16px;
+      font-size: 30px;
+    }
 
-    input, button {
+    h1 {
+      margin: 0;
+      color: var(--green);
+      font-size: clamp(23px, 5vw, 34px);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 21px;
+    }
+
+    p {
+      line-height: 1.5;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    section {
+      margin: 16px 0;
+      padding: 18px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 12px 30px #0002;
+    }
+
+    label {
       display: block;
+      margin-top: 12px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    input,
+    button {
       width: 100%;
+      min-height: 46px;
+      margin: 8px 0;
       padding: 12px;
-      margin: 9px 0;
-      border-radius: 8px;
-      border: 1px solid #46516b;
-      font-size: 16px;
+      border-radius: 9px;
+      font: inherit;
     }
 
     input {
-      background: #10131b;
-      color: white;
+      background: var(--panel2);
+      color: var(--text);
+      border: 1px solid #405071;
+    }
+
+    input:focus-visible,
+    button:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 2px;
     }
 
     button {
-      background: #77f0bd;
-      color: #10131b;
-      font-weight: bold;
-      cursor: pointer;
+      background: var(--green);
+      color: #08131a;
       border: 0;
+      font-weight: 750;
+      cursor: pointer;
+      transition: filter .15s, transform .15s;
+    }
+
+    button:hover {
+      filter: brightness(1.08);
+    }
+
+    button:active {
+      transform: scale(.99);
+    }
+
+    button:disabled {
+      opacity: .55;
+      cursor: wait;
     }
 
     button.danger {
-      background: #ff6978;
+      background: var(--red);
+      color: #23080d;
     }
 
-    .muted { color: #b4bfd5; }
-    .hidden { display: none; }
-    .room {
-      border: 1px solid #3b4660;
-      border-radius: 8px;
-      padding: 12px;
-      margin: 10px 0;
+    button.secondary {
+      background: #293651;
+      color: var(--text);
+      border: 1px solid #465777;
+    }
+
+    .hidden {
+      display: none !important;
     }
 
     #message {
       white-space: pre-wrap;
       overflow-wrap: anywhere;
+      padding: 10px 12px;
+      border-radius: 9px;
+      background: #101729;
+    }
+
+    #message:empty {
+      display: none;
+    }
+
+    #message.error {
+      color: #ff9ca6;
+      border: 1px solid #793d4b;
+    }
+
+    #message.success {
+      color: var(--green);
+      border: 1px solid #326b59;
+    }
+
+    .room {
+      margin: 12px 0;
+      padding: 14px;
+      background: #111a2c;
+      border: 1px solid #3b4965;
+      border-radius: 12px;
+    }
+
+    .room h3 {
+      margin: 0 0 8px;
+      overflow-wrap: anywhere;
+    }
+
+    .room p {
+      margin: 6px 0;
+      color: var(--muted);
+      overflow-wrap: anywhere;
+    }
+
+    .room button {
+      margin-bottom: 0;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .topline h2 {
+      margin-bottom: 5px;
+    }
+
+    .topline p {
+      margin-top: 5px;
+    }
+
+    .topline button {
+      width: auto;
+      min-width: 145px;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 4px 9px;
+      border: 1px solid #405071;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .empty {
+      padding: 18px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed #405071;
+      border-radius: 10px;
+    }
+
+    .status-open {
+      color: var(--green) !important;
+    }
+
+    .status-closed {
+      color: var(--red) !important;
+    }
+
+    @media (max-width: 560px) {
+      body {
+        padding: 10px;
+      }
+
+      section {
+        padding: 14px;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .topline {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .topline button {
+        width: 100%;
+      }
     }
   </style>
 </head>
+
 <body>
 <main>
-  <h1>🐍 Snake Rivals 3D</h1>
-  <p class="muted">Bảng điều khiển máy chủ</p>
-  <p id="message" role="status"></p>
+  <header>
+    <div class="logo" aria-hidden="true">🐍</div>
+    <div>
+      <h1>Snake Rivals 3D</h1>
+      <p class="muted" style="margin:4px 0 0">
+        Bảng điều khiển máy chủ
+        <span class="pill">ADMIN</span>
+      </p>
+    </div>
+  </header>
 
+  <p id="message" role="status" aria-live="polite"></p>
+
+  <!-- ĐĂNG NHẬP -->
   <section id="login">
-    <h2>Đăng nhập Admin</h2>
+    <h2>🔐 Đăng nhập Admin</h2>
 
     <form id="loginForm">
-      <input id="username"
-             autocomplete="username"
-             placeholder="Tên tài khoản"
-             required>
+      <label for="username">Tên tài khoản</label>
+      <input
+        id="username"
+        name="username"
+        autocomplete="username"
+        placeholder="Tên tài khoản"
+        maxlength="100"
+        required
+      >
 
-      <input id="password"
-             type="password"
-             autocomplete="current-password"
-             placeholder="Mật khẩu"
-             required>
+      <label for="password">Mật khẩu</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Mật khẩu"
+        required
+      >
 
       <button type="submit">Gửi mã OTP</button>
     </form>
   </section>
 
+  <!-- OTP -->
   <section id="otpSection" class="hidden">
-    <h2>Xác minh email</h2>
-    <p>Email nhận mã: <strong id="maskedEmail">Đang tải...</strong></p>
-    <p class="muted">Mã OTP có 6 chữ số và hết hạn sau 5 phút.</p>
+    <h2>✉️ Xác minh email</h2>
+
+    <p>
+      Email nhận mã:
+      <strong id="maskedEmail">Đang tải...</strong>
+    </p>
+
+    <p class="muted">
+      Mã OTP gồm 6 chữ số. Thời hạn phụ thuộc cấu hình máy chủ.
+    </p>
 
     <form id="otpForm">
-      <input id="otp"
-             inputmode="numeric"
-             autocomplete="one-time-code"
-             maxlength="6"
-             pattern="[0-9]{6}"
-             placeholder="Nhập mã OTP"
-             required>
+      <label for="otp">Mã xác minh</label>
+      <input
+        id="otp"
+        name="otp"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        maxlength="6"
+        pattern="[0-9]{6}"
+        placeholder="Nhập mã OTP"
+        required
+      >
 
       <button type="submit">Xác minh OTP</button>
     </form>
 
-    <button id="backButton" type="button">Quay lại đăng nhập</button>
+    <button id="backButton" class="secondary" type="button">
+      Quay lại đăng nhập
+    </button>
   </section>
 
+  <!-- BẢNG ĐIỀU KHIỂN -->
   <section id="dashboard" class="hidden">
-    <h2>Quản lý phòng</h2>
-    <p class="muted">
-      Email OTP được cấu hình trên máy chủ.
-      Trang này không có chức năng thay đổi email.
-    </p>
+    <div class="topline">
+      <div>
+        <h2>🎮 Quản lý phòng</h2>
+        <p class="muted">Tạo phòng và quản lý phòng chơi.</p>
+      </div>
+
+      <button
+        id="refreshButton"
+        class="secondary"
+        type="button"
+      >
+        ↻ Làm mới
+      </button>
+    </div>
 
     <form id="createRoomForm">
-      <input id="roomName"
-             maxlength="40"
-             placeholder="Tên phòng mới"
-             required>
+      <label for="roomName">Tên phòng mới</label>
+      <input
+        id="roomName"
+        name="roomName"
+        maxlength="40"
+        placeholder="Nhập tên phòng"
+        required
+      >
 
-      <input id="maxPlayers"
-             type="number"
-             min="2"
-             max="100"
-             value="8"
-             required>
+      <label for="maxPlayers">Số người chơi tối đa</label>
+      <input
+        id="maxPlayers"
+        name="maxPlayers"
+        type="number"
+        min="2"
+        max="100"
+        step="1"
+        value="8"
+        required
+      >
 
-      <button type="submit">+ Tạo phòng</button>
+      <button type="submit">＋ Tạo phòng</button>
     </form>
 
-    <button id="refreshButton" type="button">
-      Làm mới danh sách
-    </button>
+    <p id="roomCount" class="muted">Chưa tải danh sách phòng.</p>
 
-    <div id="rooms"></div>
+    <div id="rooms" aria-live="polite"></div>
 
     <button id="logoutButton" class="danger" type="button">
       Đăng xuất
@@ -156,29 +408,21 @@
 </main>
 
 <script>
+(() => {
+  "use strict";
+
   const $ = (id) => document.getElementById(id);
 
-  function message(text) {
-    $("message").textContent = text || "";
-  }
+  let busy = false;
+  let loadingRooms = false;
 
-  async function api(url, options = {}) {
-    const response = await fetch(url, {
-      credentials: "same-origin",
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...(options.headers || {})
-      }
-    });
-
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok || data.success === false) {
-      throw new Error(data.message || "Yêu cầu thất bại.");
+  function message(text, type = "") {
+    const element = $("message");
+    element.textContent = text || "";
+    element.className = type;
+    if (text) {
+      element.id = "message";
     }
-
-    return data;
   }
 
   function showScreen(screen) {
@@ -187,57 +431,133 @@
     $("dashboard").classList.toggle("hidden", screen !== "dashboard");
   }
 
+  function setFormBusy(form, value) {
+    form.querySelectorAll('button[type="submit"]').forEach((button) => {
+      button.disabled = value;
+    });
+  }
+
+  async function api(url, options = {}) {
+    const headers = new Headers(options.headers || {});
+
+    if (options.body && !headers.has("Content-Type")) {
+      headers.set("Content-Type", "application/json");
+    }
+
+    const response = await fetch(url, {
+      credentials: "same-origin",
+      cache: "no-store",
+      ...options,
+      headers
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || data.success === false) {
+      const error = new Error(
+        data.message || `Yêu cầu thất bại (HTTP ${response.status}).`
+      );
+
+      error.status = response.status;
+      throw error;
+    }
+
+    return data;
+  }
+
   async function loadOtpInfo() {
     try {
       const data = await api("/api/admin/otp-info");
-      $("maskedEmail").textContent = data.email;
+
+      $("maskedEmail").textContent =
+        data.email ||
+        data.maskedEmail ||
+        "Email đã được cấu hình trên máy chủ";
     } catch {
-      $("maskedEmail").textContent = "Chưa cấu hình";
+      $("maskedEmail").textContent =
+        "Không lấy được thông tin email";
     }
   }
 
+  // ĐĂNG NHẬP
   $("loginForm").addEventListener("submit", async (event) => {
     event.preventDefault();
-    message("Đang xác minh tài khoản...");
+
+    if (busy) return;
+
+    busy = true;
+    setFormBusy($("loginForm"), true);
+    message("Đang kiểm tra tài khoản và gửi mã OTP...");
 
     try {
       const data = await api("/api/admin/login", {
         method: "POST",
         body: JSON.stringify({
-          username: $("username").value,
+          username: $("username").value.trim(),
           password: $("password").value
         })
       });
 
       $("password").value = "";
+
       await loadOtpInfo();
       showScreen("otp");
-      message(data.message);
+
+      message(
+        data.message || "Máy chủ đã tiếp nhận yêu cầu đăng nhập.",
+        "success"
+      );
+
       $("otp").focus();
     } catch (error) {
-      message(error.message);
+      message(error.message, "error");
+    } finally {
+      busy = false;
+      setFormBusy($("loginForm"), false);
     }
   });
 
+  // Chỉ giữ chữ số trong OTP
+  $("otp").addEventListener("input", () => {
+    $("otp").value = $("otp").value
+      .replace(/\D/g, "")
+      .slice(0, 6);
+  });
+
+  // XÁC MINH OTP
   $("otpForm").addEventListener("submit", async (event) => {
     event.preventDefault();
-    message("Đang kiểm tra OTP...");
+
+    if (busy) return;
+
+    const otp = $("otp").value.trim();
+
+    if (!/^\d{6}$/.test(otp)) {
+      message("OTP phải gồm đúng 6 chữ số.", "error");
+      return;
+    }
+
+    busy = true;
+    setFormBusy($("otpForm"), true);
+    message("Đang xác minh OTP...");
 
     try {
       const data = await api("/api/admin/verify-otp", {
         method: "POST",
-        body: JSON.stringify({
-          otp: $("otp").value.trim()
-        })
+        body: JSON.stringify({ otp })
       });
 
       $("otp").value = "";
       showScreen("dashboard");
-      message(data.message);
+
+      message(data.message || "Đăng nhập thành công.", "success");
       await loadRooms();
     } catch (error) {
       $("otp").value = "";
-      message(error.message);
+      message(error.message, "error");
+    } finally {
+      busy = false;
+      setFormBusy($("otpForm"), false);
     }
   });
 
@@ -247,111 +567,207 @@
     message("");
   });
 
+  // TẠO THẺ PHÒNG AN TOÀN BẰNG textContent
+  function createRoomCard(room) {
+    const id = String(room.id ?? room._id ?? "");
+    const name = String(room.name || "Phòng chưa đặt tên");
+    const players = Number(room.players ?? room.playerCount ?? 0);
+    const maxPlayers = Number(room.maxPlayers ?? 0);
+    const status = String(room.status || "đang mở");
+
+    const card = document.createElement("article");
+    card.className = "room";
+
+    const title = document.createElement("h3");
+    title.textContent = "🐍 " + name;
+
+    const info = document.createElement("p");
+    info.textContent =
+      "ID: " + (id || "N/A") +
+      " | Người chơi: " + players + "/" + (maxPlayers || "?");
+
+    const statusText = document.createElement("p");
+    statusText.textContent = "Trạng thái: " + status;
+    statusText.className =
+      /đóng|closed/i.test(status) ? "status-closed" : "status-open";
+
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "danger";
+    close.textContent = "Đóng phòng";
+    close.disabled = !id || /đóng|closed/i.test(status);
+
+    close.addEventListener("click", async () => {
+      if (!id) {
+        message("Phòng này không có ID hợp lệ.", "error");
+        return;
+      }
+
+      if (!confirm('Bạn có chắc muốn đóng phòng "' + name + '"?')) {
+        return;
+      }
+
+      close.disabled = true;
+
+      try {
+        await api(
+          "/api/admin/rooms/" + encodeURIComponent(id),
+          { method: "DELETE" }
+        );
+
+        message("Đã gửi yêu cầu đóng phòng.", "success");
+        await loadRooms();
+      } catch (error) {
+        message(error.message, "error");
+        close.disabled = false;
+      }
+    });
+
+    card.append(title, info, statusText, close);
+    return card;
+  }
+
+  // TẢI DANH SÁCH PHÒNG
   async function loadRooms() {
+    if (loadingRooms) return;
+
+    loadingRooms = true;
+    $("refreshButton").disabled = true;
+    $("roomCount").textContent = "Đang tải danh sách phòng...";
+
     try {
       const data = await api("/api/admin/rooms");
+      const rooms = Array.isArray(data.rooms) ? data.rooms : [];
       const container = $("rooms");
-      container.replaceChildren();
 
-      if (!data.rooms.length) {
-        const empty = document.createElement("p");
-        empty.textContent = "Chưa có phòng nào.";
+      container.replaceChildren();
+      $("roomCount").textContent = "Tổng số phòng: " + rooms.length;
+
+      if (rooms.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "Chưa có phòng nào. Hãy tạo phòng đầu tiên!";
         container.appendChild(empty);
         return;
       }
 
-      for (const room of data.rooms) {
-        const card = document.createElement("div");
-        card.className = "room";
-
-        const title = document.createElement("h3");
-        title.textContent = room.name;
-
-        const info = document.createElement("p");
-        info.textContent =
-          "ID: " + room.id +
-          " | Người chơi: " + room.players + "/" + room.maxPlayers +
-          " | Trạng thái: " + room.status;
-
-        const close = document.createElement("button");
-        close.className = "danger";
-        close.textContent = "Đóng phòng";
-
-        close.addEventListener("click", async () => {
-          if (!confirm("Bạn có chắc muốn đóng phòng này?")) return;
-
-          try {
-            await api("/api/admin/rooms/" + encodeURIComponent(room.id), {
-              method: "DELETE"
-            });
-
-            message("Đã đóng phòng.");
-            await loadRooms();
-          } catch (error) {
-            message(error.message);
-          }
-        });
-
-        card.append(title, info, close);
-        container.appendChild(card);
+      for (const room of rooms) {
+        container.appendChild(createRoomCard(room));
       }
     } catch (error) {
-      message(error.message);
+      $("roomCount").textContent = "Không tải được danh sách phòng.";
+      message(error.message, "error");
 
-      if (error.message.includes("đăng nhập")) {
+      if (error.status === 401 || error.status === 403) {
         showScreen("login");
       }
+    } finally {
+      loadingRooms = false;
+      $("refreshButton").disabled = false;
     }
   }
 
+  // TẠO PHÒNG
   $("createRoomForm").addEventListener("submit", async (event) => {
     event.preventDefault();
 
+    if (busy) return;
+
+    const name = $("roomName").value.trim();
+    const maxPlayers = Number($("maxPlayers").value);
+
+    if (!name) {
+      message("Vui lòng nhập tên phòng.", "error");
+      $("roomName").focus();
+      return;
+    }
+
+    if (
+      name.length > 40 ||
+      !Number.isInteger(maxPlayers) ||
+      maxPlayers < 2 ||
+      maxPlayers > 100
+    ) {
+      message(
+        "Tên phòng tối đa 40 ký tự; số người chơi phải từ 2 đến 100.",
+        "error"
+      );
+      return;
+    }
+
+    busy = true;
+
+    const submit = $("createRoomForm")
+      .querySelector('button[type="submit"]');
+
+    submit.disabled = true;
+    message("Đang tạo phòng...");
+
     try {
-      await api("/api/admin/rooms", {
+      const data = await api("/api/admin/rooms", {
         method: "POST",
-        body: JSON.stringify({
-          name: $("roomName").value.trim(),
-          maxPlayers: Number($("maxPlayers").value)
-        })
+        body: JSON.stringify({ name, maxPlayers })
       });
 
       $("roomName").value = "";
-      message("Đã tạo phòng.");
+
+      message(data.message || "Đã tạo phòng.", "success");
       await loadRooms();
     } catch (error) {
-      message(error.message);
+      message(error.message, "error");
+    } finally {
+      busy = false;
+      submit.disabled = false;
     }
   });
 
   $("refreshButton").addEventListener("click", loadRooms);
 
+  // ĐĂNG XUẤT
   $("logoutButton").addEventListener("click", async () => {
+    if (busy) return;
+
+    if (!confirm("Bạn có muốn đăng xuất Admin không?")) {
+      return;
+    }
+
+    busy = true;
+    $("logoutButton").disabled = true;
+
     try {
-      await api("/api/admin/logout", {
+      const data = await api("/api/admin/logout", {
         method: "POST",
         body: "{}"
       });
 
       showScreen("login");
-      message("Đã đăng xuất.");
+      message(data.message || "Đã đăng xuất.", "success");
     } catch (error) {
-      message(error.message);
+      message(error.message, "error");
+    } finally {
+      busy = false;
+      $("logoutButton").disabled = false;
     }
   });
 
+  // KIỂM TRA PHIÊN ĐĂNG NHẬP KHI MỞ TRANG
   async function initialize() {
+    message("Đang kết nối máy chủ...");
+
     try {
       await api("/api/admin/me");
       showScreen("dashboard");
+      message("Đã khôi phục phiên Admin.", "success");
       await loadRooms();
     } catch {
       showScreen("login");
+      message("Vui lòng đăng nhập để tiếp tục.");
       await loadOtpInfo();
     }
   }
 
   initialize();
+})();
 </script>
 </body>
 </html>
