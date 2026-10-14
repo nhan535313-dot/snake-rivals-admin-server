@@ -1,0 +1,44 @@
+
+<audio id="bgMusic" loop preload="auto">
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<button id="musicButton" onclick="toggleMusic()">
+  🎵 Bật nhạc Unity
+</button>
+
+<label for="musicVolume">Âm lượng:</label>
+<input
+  id="musicVolume"
+  type="range"
+  min="0"
+  max="100"
+  value="50"
+  oninput="setMusicVolume(this.value)"
+>
+
+<script>
+const bgMusic = document.getElementById("bgMusic");
+const musicButton = document.getElementById("musicButton");
+
+bgMusic.volume = 0.5;
+
+function toggleMusic() {
+  if (bgMusic.paused) {
+    bgMusic.play()
+      .then(() => {
+        musicButton.textContent = "🔇 Tắt nhạc Unity";
+      })
+      .catch(() => {
+        alert("Không phát được nhạc. Hãy kiểm tra file music.mp3!");
+      });
+  } else {
+    bgMusic.pause();
+    musicButton.textContent = "🎵 Bật nhạc Unity";
+  }
+}
+
+function setMusicVolume(value) {
+  bgMusic.volume = Number(value) / 100;
+}
+</script>
