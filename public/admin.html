@@ -1,126 +1,357 @@
-<!DOCTYPE html><html lang="vi">
+
+<!DOCTYPE html>
+<html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Snake Rivals 3D - Admin</title>
-<style>
-body{font-family:Arial,sans-serif;background:#101827;color:#fff;margin:0;padding:20px}
-main{max-width:600px;margin:auto}
-section{background:#1e293b;padding:18px;border-radius:12px;margin:14px 0}
-input,button{box-sizing:border-box;width:100%;padding:12px;margin:6px 0;border:0;border-radius:8px}
-button{background:#22c55e;color:#06200f;font-weight:bold}
-.danger{background:#ef4444;color:white}
-.room{background:#334155;padding:12px;border-radius:8px;margin:8px 0;overflow-wrap:anywhere}
-small{color:#cbd5e1}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Snake Rivals 3D — Admin</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #10131b;
+      color: #f4f6ff;
+      font-family: Arial, sans-serif;
+    }
+
+    main {
+      width: 100%;
+      max-width: 850px;
+      margin: auto;
+    }
+
+    section {
+      background: #1a2030;
+      border: 1px solid #30394e;
+      border-radius: 14px;
+      padding: 18px;
+      margin: 16px 0;
+    }
+
+    h1 { color: #77f0bd; }
+    h2 { font-size: 20px; }
+
+    input, button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 9px 0;
+      border-radius: 8px;
+      border: 1px solid #46516b;
+      font-size: 16px;
+    }
+
+    input {
+      background: #10131b;
+      color: white;
+    }
+
+    button {
+      background: #77f0bd;
+      color: #10131b;
+      font-weight: bold;
+      cursor: pointer;
+      border: 0;
+    }
+
+    button.danger {
+      background: #ff6978;
+    }
+
+    .muted { color: #b4bfd5; }
+    .hidden { display: none; }
+    .room {
+      border: 1px solid #3b4660;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 10px 0;
+    }
+
+    #message {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+  </style>
 </head>
 <body>
 <main>
-<h1>🐍 Snake Rivals 3D</h1>
-<h2>Admin Dashboard</h2>
-<section>
-<h3>Đăng nhập Admin</h3>
-<input id="password" type="password" placeholder="Mật khẩu ADMIN_PASSWORD">
-<button onclick="login()">Đăng nhập</button>
-<p id="status">Chưa đăng nhập</p>
-</section>
-<section id="panel" hidden>
-<h3>Tạo phòng chơi</h3>
-<input id="roomName" placeholder="Tên phòng">
-<button onclick="createRoom()">+ Tạo phòng</button>
-<h3>Danh sách phòng</h3>
-<button onclick="loadRooms()">Làm mới danh sách</button>
-<div id="rooms">Đang tải...</div>
-</section>
+  <h1>🐍 Snake Rivals 3D</h1>
+  <p class="muted">Bảng điều khiển máy chủ</p>
+  <p id="message" role="status"></p>
+
+  <section id="login">
+    <h2>Đăng nhập Admin</h2>
+
+    <form id="loginForm">
+      <input id="username"
+             autocomplete="username"
+             placeholder="Tên tài khoản"
+             required>
+
+      <input id="password"
+             type="password"
+             autocomplete="current-password"
+             placeholder="Mật khẩu"
+             required>
+
+      <button type="submit">Gửi mã OTP</button>
+    </form>
+  </section>
+
+  <section id="otpSection" class="hidden">
+    <h2>Xác minh email</h2>
+    <p>Email nhận mã: <strong id="maskedEmail">Đang tải...</strong></p>
+    <p class="muted">Mã OTP có 6 chữ số và hết hạn sau 5 phút.</p>
+
+    <form id="otpForm">
+      <input id="otp"
+             inputmode="numeric"
+             autocomplete="one-time-code"
+             maxlength="6"
+             pattern="[0-9]{6}"
+             placeholder="Nhập mã OTP"
+             required>
+
+      <button type="submit">Xác minh OTP</button>
+    </form>
+
+    <button id="backButton" type="button">Quay lại đăng nhập</button>
+  </section>
+
+  <section id="dashboard" class="hidden">
+    <h2>Quản lý phòng</h2>
+    <p class="muted">
+      Email OTP được cấu hình trên máy chủ.
+      Trang này không có chức năng thay đổi email.
+    </p>
+
+    <form id="createRoomForm">
+      <input id="roomName"
+             maxlength="40"
+             placeholder="Tên phòng mới"
+             required>
+
+      <input id="maxPlayers"
+             type="number"
+             min="2"
+             max="100"
+             value="8"
+             required>
+
+      <button type="submit">+ Tạo phòng</button>
+    </form>
+
+    <button id="refreshButton" type="button">
+      Làm mới danh sách
+    </button>
+
+    <div id="rooms"></div>
+
+    <button id="logoutButton" class="danger" type="button">
+      Đăng xuất
+    </button>
+  </section>
 </main>
+
 <script>
-let adminPassword = "";async function api(path, options = {}) {
-const response = await fetch(path, {
-...options,
-headers: {
-"Content-Type": "application/json",
-"x-admin-password": adminPassword,
-...(options.headers || {})
-}
-});
-const data = await response.json().catch(() => ({}));
-if (!response.ok) throw new Error(data.error || "Có lỗi xảy ra");
-return data;
-}
+  const $ = (id) => document.getElementById(id);
 
-async function login() {
-adminPassword = document.getElementById("password").value;
-try {
-await api("/api/admin/rooms", {
-method: "POST",
-body: JSON.stringify({ name: "test" })
-}).then(async data => {
-if (data.room) {
-await api("/api/admin/rooms/" + data.room.id, {
-method: "DELETE"
-});
-}
-});
-document.getElementById("panel").hidden = false;
-document.getElementById("status").textContent = "Đăng nhập thành công!";
-loadRooms();
-} catch (error) {
-document.getElementById("status").textContent =
-"Không đăng nhập được: " + error.message;
-}
-}
+  function message(text) {
+    $("message").textContent = text || "";
+  }
 
-async function createRoom() {
-try {
-const name = document.getElementById("roomName").value.trim() || "Phòng mới";
-const data = await api("/api/admin/rooms", {
-method: "POST",
-body: JSON.stringify({ name })
-});
-document.getElementById("roomName").value = "";
-alert("Đã tạo phòng: " + data.room.id);
-loadRooms();
-} catch (error) {
-alert(error.message);
-}
-}
+  async function api(url, options = {}) {
+    const response = await fetch(url, {
+      credentials: "same-origin",
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {})
+      }
+    });
 
-async function loadRooms() {
-const container = document.getElementById("rooms");
-try {
-const rooms = await api("/api/rooms");
-container.replaceChildren();
-if (!rooms.length) {
-container.textContent = "Chưa có phòng nào.";
-return;
-}
-for (const room of rooms) {
-const item = document.createElement("div");
-item.className = "room";
-const title = document.createElement("strong");
-title.textContent = room.name + " — " + room.id;
-const detail = document.createElement("p");
-detail.textContent = "Người chơi: " + room.players;
-const close = document.createElement("button");
-close.className = "danger";
-close.textContent = "Đóng phòng";
-close.onclick = async () => {
-if (!confirm("Đóng phòng " + room.id + "?")) return;
-try {
-await api("/api/admin/rooms/" + room.id, { method: "DELETE" });
-loadRooms();
-} catch (error) {
-alert(error.message);
-}
-};
-item.append(title, detail, close);
-container.append(item);
-}
-} catch (error) {
-container.textContent = error.message;
-}
-}
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || data.success === false) {
+      throw new Error(data.message || "Yêu cầu thất bại.");
+    }
+
+    return data;
+  }
+
+  function showScreen(screen) {
+    $("login").classList.toggle("hidden", screen !== "login");
+    $("otpSection").classList.toggle("hidden", screen !== "otp");
+    $("dashboard").classList.toggle("hidden", screen !== "dashboard");
+  }
+
+  async function loadOtpInfo() {
+    try {
+      const data = await api("/api/admin/otp-info");
+      $("maskedEmail").textContent = data.email;
+    } catch {
+      $("maskedEmail").textContent = "Chưa cấu hình";
+    }
+  }
+
+  $("loginForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    message("Đang xác minh tài khoản...");
+
+    try {
+      const data = await api("/api/admin/login", {
+        method: "POST",
+        body: JSON.stringify({
+          username: $("username").value,
+          password: $("password").value
+        })
+      });
+
+      $("password").value = "";
+      await loadOtpInfo();
+      showScreen("otp");
+      message(data.message);
+      $("otp").focus();
+    } catch (error) {
+      message(error.message);
+    }
+  });
+
+  $("otpForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    message("Đang kiểm tra OTP...");
+
+    try {
+      const data = await api("/api/admin/verify-otp", {
+        method: "POST",
+        body: JSON.stringify({
+          otp: $("otp").value.trim()
+        })
+      });
+
+      $("otp").value = "";
+      showScreen("dashboard");
+      message(data.message);
+      await loadRooms();
+    } catch (error) {
+      $("otp").value = "";
+      message(error.message);
+    }
+  });
+
+  $("backButton").addEventListener("click", () => {
+    $("otp").value = "";
+    showScreen("login");
+    message("");
+  });
+
+  async function loadRooms() {
+    try {
+      const data = await api("/api/admin/rooms");
+      const container = $("rooms");
+      container.replaceChildren();
+
+      if (!data.rooms.length) {
+        const empty = document.createElement("p");
+        empty.textContent = "Chưa có phòng nào.";
+        container.appendChild(empty);
+        return;
+      }
+
+      for (const room of data.rooms) {
+        const card = document.createElement("div");
+        card.className = "room";
+
+        const title = document.createElement("h3");
+        title.textContent = room.name;
+
+        const info = document.createElement("p");
+        info.textContent =
+          "ID: " + room.id +
+          " | Người chơi: " + room.players + "/" + room.maxPlayers +
+          " | Trạng thái: " + room.status;
+
+        const close = document.createElement("button");
+        close.className = "danger";
+        close.textContent = "Đóng phòng";
+
+        close.addEventListener("click", async () => {
+          if (!confirm("Bạn có chắc muốn đóng phòng này?")) return;
+
+          try {
+            await api("/api/admin/rooms/" + encodeURIComponent(room.id), {
+              method: "DELETE"
+            });
+
+            message("Đã đóng phòng.");
+            await loadRooms();
+          } catch (error) {
+            message(error.message);
+          }
+        });
+
+        card.append(title, info, close);
+        container.appendChild(card);
+      }
+    } catch (error) {
+      message(error.message);
+
+      if (error.message.includes("đăng nhập")) {
+        showScreen("login");
+      }
+    }
+  }
+
+  $("createRoomForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    try {
+      await api("/api/admin/rooms", {
+        method: "POST",
+        body: JSON.stringify({
+          name: $("roomName").value.trim(),
+          maxPlayers: Number($("maxPlayers").value)
+        })
+      });
+
+      $("roomName").value = "";
+      message("Đã tạo phòng.");
+      await loadRooms();
+    } catch (error) {
+      message(error.message);
+    }
+  });
+
+  $("refreshButton").addEventListener("click", loadRooms);
+
+  $("logoutButton").addEventListener("click", async () => {
+    try {
+      await api("/api/admin/logout", {
+        method: "POST",
+        body: "{}"
+      });
+
+      showScreen("login");
+      message("Đã đăng xuất.");
+    } catch (error) {
+      message(error.message);
+    }
+  });
+
+  async function initialize() {
+    try {
+      await api("/api/admin/me");
+      showScreen("dashboard");
+      await loadRooms();
+    } catch {
+      showScreen("login");
+      await loadOtpInfo();
+    }
+  }
+
+  initialize();
 </script>
-
 </body>
 </html>
