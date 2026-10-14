@@ -1,44 +1,32 @@
-
-<audio id="bgMusic" loop preload="auto">
-  <source src="music.mp3" type="audio/mpeg">
-</audio>
-
-<button id="musicButton" onclick="toggleMusic()">
-  🎵 Bật nhạc Unity
-</button>
-
-<label for="musicVolume">Âm lượng:</label>
-<input
-  id="musicVolume"
-  type="range"
-  min="0"
-  max="100"
-  value="50"
-  oninput="setMusicVolume(this.value)"
->
-
+<!-- ===== SNAKE RIVALS MUSIC ===== -->
+<div id="musicPanel">
+  <button id="musicButton" onclick="toggleMusic()">🎵 Bật nhạc</button>
+  <audio id="gameMusic" src="/music.mp3" loop preload="auto"></audio>
+</div>
 <script>
-const bgMusic = document.getElementById("bgMusic");
+const gameMusic = document.getElementById("gameMusic");
 const musicButton = document.getElementById("musicButton");
+gameMusic.volume = 0.7;
 
-bgMusic.volume = 0.5;
-
-function toggleMusic() {
-  if (bgMusic.paused) {
-    bgMusic.play()
-      .then(() => {
-        musicButton.textContent = "🔇 Tắt nhạc Unity";
-      })
-      .catch(() => {
-        alert("Không phát được nhạc. Hãy kiểm tra file music.mp3!");
-      });
+async function toggleMusic() {
+  if (gameMusic.paused) {
+    try {
+      await gameMusic.play();
+      musicButton.textContent = "🔊 Tắt nhạc";
+    } catch (error) {
+      musicButton.textContent = "❌ Không phát được nhạc";
+      console.error("Lỗi phát nhạc:", error);
+    }
   } else {
-    bgMusic.pause();
-    musicButton.textContent = "🎵 Bật nhạc Unity";
+    gameMusic.pause();
+    musicButton.textContent = "🎵 Bật nhạc";
   }
 }
 
-function setMusicVolume(value) {
-  bgMusic.volume = Number(value) / 100;
-}
+gameMusic.addEventListener("play", () => {
+  musicButton.textContent = "🔊 Tắt nhạc";
+});
+gameMusic.addEventListener("pause", () => {
+  musicButton.textContent = "🎵 Bật nhạc";
+});
 </script>
