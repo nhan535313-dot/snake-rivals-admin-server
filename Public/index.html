@@ -4,515 +4,411 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#101d2b">
+<meta name="theme-color" content="#07111b">
 <title>Snake Rivals 3D</title>
 <style>
-:root{--bg:#09131d;--panel:#142536;--panel2:#1b3043;--green:#69f5a4;--gold:#ffd36a;--text:#f3f8ff;--muted:#a8bdd0}
+:root{--bg:#07111b;--panel:#102034;--line:#28445d;--green:#48ffab;--blue:#49cfff}
 *{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at top,#203e4d 0,#09131d 65%);font-family:Arial,sans-serif;color:var(--text);min-height:100vh}
+body{margin:0;background:radial-gradient(ellipse at top,#17334c,#07111b 65%);font-family:Arial,sans-serif;color:#f2f7ff}
 button,input,select{font:inherit}
-button{border:0;border-radius:11px;padding:12px 15px;font-weight:800;background:linear-gradient(#8bffc0,#35d98b);color:#092118;cursor:pointer;box-shadow:0 4px 0 #168654;transition:transform .12s}
-button:active{transform:translateY(2px);box-shadow:0 2px 0 #168654}
-button.secondary{background:linear-gradient(#344d62,#23394d);color:white;box-shadow:0 4px 0 #132535}
-button.gold{background:linear-gradient(#ffe9a0,#ffbd47);color:#432800;box-shadow:0 4px 0 #a36c1d}
-button.danger{background:linear-gradient(#ff9caa,#fa5269);color:#3c0610;box-shadow:0 4px 0 #9d273a}
-button:disabled{opacity:.45}
-input,select{background:#0c1925;border:1px solid #3b5267;border-radius:9px;color:white;padding:12px;width:100%;margin:5px 0}
-input::placeholder{color:#91a4b8}
-header{position:sticky;top:0;z-index:5;background:#0b1724ed;border-bottom:1px solid #2d485a;backdrop-filter:blur(12px);padding:12px 15px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.logo{font-weight:1000;font-size:19px;letter-spacing:1px;color:var(--green)}
-.logo span{color:white}
-.topright{font-size:12px;color:var(--muted);text-align:right}
-main{max-width:1000px;margin:auto;padding:14px}
-.card{background:linear-gradient(145deg,#182d40f5,#0f1e2cf5);border:1px solid #2c475b;border-radius:17px;padding:15px;margin-bottom:14px;box-shadow:0 9px 28px #0003}
-h1,h2,h3,p{margin-top:0}
-h2{font-size:19px;margin-bottom:12px}
-h3{font-size:15px}
-.small{font-size:12px;color:var(--muted);line-height:1.5}
+button{padding:10px 13px;border-radius:11px;border:1px solid #36546d;background:#1a344b;color:#fff;font-weight:bold;cursor:pointer}
+button:active{transform:scale(.97)}
+.primary{background:linear-gradient(120deg,#17bd7a,#53ffb0);border:0;color:#052219}
+input,select{width:100%;padding:11px;margin:5px 0;background:#081522;color:#fff;border:1px solid #36546d;border-radius:9px}
+header{position:sticky;top:0;z-index:5;background:#07111bf2;border-bottom:1px solid var(--line);padding:10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.logo{font-weight:1000;color:var(--green);font-size:18px}
+.small{font-size:12px;color:#a7bfd4}
+.wrap{max-width:1100px;margin:auto;padding:12px}
+.panel{padding:14px;background:linear-gradient(145deg,#12283d,#0b1928);border:1px solid var(--line);border-radius:16px;margin-bottom:12px}
+h1{font-size:27px}h2{font-size:19px;margin-top:0}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.stat{background:#071521;border:1px solid #233b50;border-radius:10px;padding:10px;font-size:12px;color:#b6cbdf}
+.stat b{display:block;font-size:19px;color:var(--green);margin-top:5px}
 .hidden{display:none!important}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.row>*{flex:1}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}
-.stat{background:#091723;border:1px solid #284357;border-radius:11px;padding:10px 5px;text-align:center}
-.stat small{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}
-.stat b{font-size:20px;color:var(--green)}
-#gameWrap{position:relative;width:100%;max-width:650px;margin:auto}
-#game{display:block;width:100%;height:auto;aspect-ratio:1/1;background:#153c32;border:2px solid #507c69;border-radius:15px;touch-action:none;box-shadow:0 10px 25px #0007}
-#overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
-#overlay>div{background:#07131de8;border:1px solid #547487;border-radius:15px;padding:20px;text-align:center;max-width:85%}
-#overlay h2{font-size:25px;color:var(--green)}
-#overlay p{font-size:13px;color:#d3e2ec;line-height:1.5}
-#overlay.hidden{display:none}
-.gamebuttons{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
-.gamebuttons button{padding:12px 4px;font-size:12px}
-.dpad{display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:48px 48px 48px;gap:5px;justify-content:center;margin:15px auto 4px;touch-action:manipulation}
-.dpad button{padding:3px;font-size:22px;border-radius:12px}
-.dpad .up{grid-column:2;grid-row:1}
-.dpad .left{grid-column:1;grid-row:2}
-.dpad .down{grid-column:2;grid-row:2}
-.dpad .right{grid-column:3;grid-row:2}
-.menuGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.menuTile{min-height:95px;text-align:left;padding:15px;background:linear-gradient(140deg,#26475a,#172b3d);color:white;box-shadow:none;border:1px solid #3d6174}
-.menuTile b{display:block;font-size:15px;margin-bottom:7px}
-.menuTile span{font-size:12px;color:#b8d0df;font-weight:400}
-.skinGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
-.skin{background:#0b1a27;border:1px solid #345166;border-radius:12px;padding:10px 5px;text-align:center;box-shadow:none;color:white}
-.skin.selected{border:2px solid var(--green);background:#16382f}
-.skinBall{width:30px;height:30px;border-radius:50%;margin:0 auto 7px;box-shadow:inset -5px -5px 9px #0005,0 0 10px #fff2}
-.skin small{display:block;color:#b5c7d7;font-size:11px;margin-top:5px}
-.badge{display:inline-block;background:#233b4d;border-radius:99px;padding:5px 9px;font-size:11px;color:#cde3f0}
-#message{color:#ffdc85;font-size:13px;min-height:20px;text-align:center;margin:10px 0}
-.list{padding-left:25px;line-height:2}
-hr{border:0;border-top:1px solid #294357;margin:15px 0}
-footer{text-align:center;color:#839bae;font-size:11px;padding:15px}
-@media(min-width:700px){main{padding:20px}.gameLayout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(250px,.7fr);gap:14px;align-items:start}.gameLayout .card{margin-bottom:0}.skinGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:360px){main{padding:8px}.card{padding:10px}.menuTile{padding:10px}.stats b{font-size:17px}.logo{font-size:16px}}
+#arena{position:relative;background:#0a281f;overflow:hidden;border-radius:13px;border:1px solid #365c69}
+#game{display:block;width:100%;height:auto;touch-action:none}
+#hud{position:absolute;left:8px;top:8px;display:flex;gap:5px;flex-wrap:wrap;pointer-events:none}
+.hudbox{padding:6px 8px;background:#06121bd9;border:1px solid #416274;border-radius:8px;font-size:11px}
+#map{position:absolute;right:8px;top:8px;width:100px;height:100px;border:1px solid #7dffca;border-radius:9px;background:#071a22d9}
+#centerMessage{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);text-align:center;width:90%;pointer-events:none;text-shadow:0 3px 12px #000}
+#mobile{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:10px}
+.ctrl{width:66px;height:58px;font-size:24px;background:#173a48}
+.skin{padding:10px;border:1px solid #34516a;border-radius:12px;text-align:center;background:#091827}
+.swatch{height:26px;border-radius:7px;margin-bottom:8px}
+.skin.selected{border:2px solid var(--green)}
+footer{text-align:center;color:#829cb1;padding:15px;font-size:12px}
 </style>
 </head>
 <body>
-
 <header>
-<div class="logo">🐍 SNAKE <span>RIVALS</span></div>
-<div class="topright">3D ARENA<br><span id="headerUser">GUEST PLAYER</span></div>
+ <div><div class="logo">🐍 SNAKE RIVALS 3D</div><div class="small">50 AI • HARD MODE • HIGH FX</div></div>
+ <div class="row"><button onclick="toggleMusic()" id="musicBtn">🎵 Nhạc: Bật</button><button onclick="show('settings')">⚙️</button></div>
 </header>
 
-<main>
-<section id="homeScreen" class="card">
-<div style="text-align:center;padding:15px 0 20px">
-<div style="font-size:55px">🐍</div>
-<h1 style="font-size:30px;margin-bottom:8px">SNAKE RIVALS</h1>
-<p style="color:var(--green);font-weight:bold">ENTER THE ARENA</p>
-<p class="small">Thu thập thức ăn • Phát triển rắn • Chinh phục đấu trường</p>
-<button style="width:100%;max-width:330px;font-size:17px" onclick="startGame()">▶ CHƠI NGAY</button>
-</div>
-<div class="menuGrid">
-<button class="menuTile" onclick="showScreen('skinScreen')"><b>🎨 Skin rắn</b><span>Chọn ngoại hình yêu thích</span></button>
-<button class="menuTile" onclick="showScreen('settingsScreen')"><b>⚙️ Cài đặt</b><span>Âm thanh và độ khó</span></button>
-<button class="menuTile" onclick="showScreen('accountScreen')"><b>👤 Tài khoản</b><span>Đăng nhập và đăng ký</span></button>
-<button class="menuTile" onclick="showScreen('rankScreen');refreshLeaderboard()"><b>🏆 Xếp hạng</b><span>So điểm cùng người chơi</span></button>
-<button class="menuTile" onclick="showScreen('musicScreen')"><b>🎵 Âm nhạc</b><span>Bật hoặc tắt nhạc</span></button>
-<button class="menuTile" onclick="showScreen('adminScreen')"><b>🛡️ Quản trị</b><span>Khu vực admin</span></button>
-</div>
+<main class="wrap">
+<section id="home" class="panel">
+ <h1>🐍 Snake Rivals</h1>
+ <p>Khám phá thế giới rộng lớn, săn thức ăn, thu thập xu và chiến đấu với 50 rắn AI.</p>
+ <div class="grid">
+  <div class="stat">Điểm cao nhất<b id="best">0</b></div>
+  <div class="stat">Xu<b id="coins">0</b></div>
+  <div class="stat">Skin<b id="skinName">Emerald</b></div>
+  <div class="stat">Thế giới<b>12000 × 12000</b></div>
+ </div>
+ <div class="row" style="margin-top:12px">
+  <button class="primary" onclick="startGame()">▶ CHƠI NGAY</button>
+  <button onclick="show('skins')">🎨 Skin</button>
+  <button onclick="show('settings')">⚙️ Cài đặt</button>
+  <button onclick="show('account')">👤 Tài khoản</button>
+  <button onclick="show('leaderboard');loadLeaderboard()">🏆 Xếp hạng</button>
+  <button onclick="show('admin')">🛡️ Quản trị</button>
+ </div>
+ <p id="message" class="small"></p>
 </section>
 
-<section id="gameScreen" class="hidden">
-<div class="gameLayout">
-<div class="card">
-<div class="stats">
-<div class="stat"><small>ĐIỂM</small><b id="score">0</b></div>
-<div class="stat"><small>KỶ LỤC</small><b id="best">0</b></div>
-<div class="stat"><small>CHIỀU DÀI</small><b id="length">3</b></div>
-</div>
-<div id="gameWrap">
-<canvas id="game" width="600" height="600"></canvas>
-<div id="overlay">
-<div><h2>🐍 Snake Rivals</h2><p>Đấu trường đã sẵn sàng!</p><button onclick="startGame()">BẮT ĐẦU</button></div>
-</div>
-</div>
-<div id="message">Nhấn Bắt đầu để chơi.</div>
-<div class="gamebuttons">
-<button onclick="startGame()">▶ Chơi lại</button>
-<button class="secondary" onclick="pauseGame()">Ⅱ Tạm dừng</button>
-<button class="danger" onclick="returnHome()">⌂ Menu</button>
-</div>
-<div class="dpad">
-<button class="up" onclick="setDirection(0,-1)">▲</button>
-<button class="left" onclick="setDirection(-1,0)">◀</button>
-<button class="down" onclick="setDirection(0,1)">▼</button>
-<button class="right" onclick="setDirection(1,0)">▶</button>
-</div>
-<p class="small" style="text-align:center">Chạm nút điều hướng hoặc vuốt trên bản đồ.</p>
-</div>
-<div>
-<div class="card">
-<h2>🗺️ Đấu trường</h2>
-<p class="small">Khu vườn xanh</p>
-<div class="row">
-<span class="badge">🌳 Cây trang trí</span>
-<span class="badge">🌼 Hoa</span>
-<span class="badge">🪨 Đá</span>
-</div>
-<hr>
-<h3>🍎 Thức ăn trên bản đồ</h3>
-<p class="small">Có 15 hạt thức ăn xuất hiện đồng thời. Ăn một hạt để tăng điểm và chiều dài.</p>
-<div class="stats">
-<div class="stat"><small>THỨC ĂN</small><b id="foodCount">15</b></div>
-<div class="stat"><small>ĐIỂM / HẠT</small><b>10</b></div>
-<div class="stat"><small>SKIN</small><b id="skinName" style="font-size:13px">Emerald</b></div>
-</div>
-</div>
-<div class="card">
-<h2>🎨 Skin hiện tại</h2>
-<div class="row">
-<div id="currentSkinPreview" class="skinBall" style="width:45px;height:45px;background:#52f5a4"></div>
-<div><b id="currentSkinName">Emerald</b><p class="small">Ngoại hình rắn của bạn</p></div>
-</div>
-<button class="secondary" style="width:100%;margin-top:12px" onclick="showScreen('skinScreen')">Đổi skin</button>
-</div>
-<div class="card">
-<h2>💡 Cách chơi</h2>
-<p class="small">• Ăn thức ăn để tăng điểm.</p>
-<p class="small">• Tránh đâm vào tường hoặc thân rắn.</p>
-<p class="small">• Rắn dài thêm mỗi khi ăn.</p>
-<p class="small">• Bản đồ có cây, đá và hoa trang trí.</p>
-</div>
-</div>
-</div>
+<section id="gamePanel" class="panel hidden">
+ <div class="row" style="justify-content:space-between"><h2>🌎 Đấu trường</h2><button onclick="home()">⌂ Menu</button></div>
+ <div class="grid">
+  <div class="stat">Điểm<b id="score">0</b></div>
+  <div class="stat">Chiều dài<b id="length">10</b></div>
+  <div class="stat">Xu nhặt được<b id="runCoins">0</b></div>
+  <div class="stat">AI còn sống<b id="aiAlive">50</b></div>
+ </div>
+ <div id="arena">
+  <canvas id="game" width="900" height="600"></canvas>
+  <canvas id="map" width="180" height="180"></canvas>
+  <div id="hud"><div class="hudbox" id="speedHUD">Tốc độ: 1×</div><div class="hudbox" id="shieldHUD">🛡️ Khiên: Sẵn sàng</div></div>
+  <div id="centerMessage"></div>
+ </div>
+ <div id="mobile">
+  <button class="ctrl" onclick="steer(-1)">↶</button>
+  <div class="small" style="text-align:center">Vuốt màn hình để rẽ<br>Giữ nút tăng tốc để chạy nhanh</div>
+  <button class="ctrl" id="boostBtn" onpointerdown="boost=true" onpointerup="boost=false" onpointerleave="boost=false" onpointercancel="boost=false">⚡</button>
+ </div>
+ <div class="row" style="margin-top:10px">
+  <button onclick="activateShield()">🛡️ Khiên</button>
+  <button onclick="pauseGame()">⏸ Tạm dừng</button>
+  <button onclick="startGame()">🔄 Chơi lại</button>
+ </div>
+ <p class="small">Trên máy tính: di chuyển chuột để đổi hướng, giữ Shift để tăng tốc.</p>
 </section>
 
-<section id="skinScreen" class="card hidden">
-<h2>🎨 Chọn skin rắn</h2>
-<p class="small">Chọn màu bạn thích. Skin sẽ áp dụng ngay trong ván chơi.</p>
-<div id="skinGrid" class="skinGrid"></div>
-<hr>
-<button class="secondary" onclick="showScreen('homeScreen')">← Quay lại menu</button>
+<section id="skins" class="panel hidden">
+ <div class="row" style="justify-content:space-between"><h2>🎨 Skin rắn</h2><button onclick="home()">← Menu</button></div>
+ <p class="small">Điểm cao nhất dùng để mở skin mới.</p><div id="skinGrid" class="grid"></div>
 </section>
 
-<section id="settingsScreen" class="card hidden">
-<h2>⚙️ Cài đặt</h2>
-<label for="speed">Tốc độ game</label>
-<select id="speed" onchange="changeSpeed()">
-<option value="170">Chậm - dễ chơi</option>
-<option value="120" selected>Bình thường</option>
-<option value="85">Nhanh</option>
-<option value="60">Rất nhanh</option>
-</select>
-<label for="mapStyle">Kiểu bản đồ</label>
-<select id="mapStyle" onchange="draw()">
-<option value="garden">Khu vườn xanh</option>
-<option value="desert">Sa mạc</option>
-<option value="night">Đêm huyền bí</option>
-</select>
-<label><input id="soundOn" type="checkbox" checked style="width:auto" onchange="saveSettings()"> Âm thanh hiệu ứng</label>
-<label><input id="decorOn" type="checkbox" checked style="width:auto" onchange="draw();saveSettings()"> Hiển thị vật trang trí</label>
-<label><input id="gridOn" type="checkbox" checked style="width:auto" onchange="draw();saveSettings()"> Hiển thị ô bản đồ</label>
-<hr>
-<button onclick="saveSettings()">Lưu cài đặt</button>
-<button class="secondary" onclick="showScreen('homeScreen')">← Quay lại</button>
+<section id="settings" class="panel hidden">
+ <div class="row" style="justify-content:space-between"><h2>⚙️ Cài đặt</h2><button onclick="home()">← Menu</button></div>
+ <label>Âm lượng nhạc</label><input id="volume" type="range" min="0" max="100" value="35" oninput="setVolume(this.value)">
+ <label>Tốc độ di chuyển</label><select id="speedSetting"><option value="normal">Bình thường</option><option value="fast">Nhanh</option><option value="slow">Chậm</option></select>
+ <label>Chất lượng hiệu ứng</label><select id="fxSetting"><option value="high">Cao</option><option value="low">Thấp - ưu tiên FPS</option></select>
+ <label><input id="decorToggle" type="checkbox" checked style="width:auto"> Hiển thị cây và đá</label>
+ <label><input id="soundToggle" type="checkbox" checked style="width:auto"> Âm thanh khi ăn</label>
+ <label><input id="aiToggle" type="checkbox" checked style="width:auto"> Bật 50 AI</label>
+ <button class="primary" onclick="saveSettings()">Lưu cài đặt</button>
 </section>
 
-<section id="accountScreen" class="card hidden">
-<h2>👤 Tài khoản</h2>
-<div id="loggedOut">
-<input id="username" placeholder="Tên tài khoản" maxlength="20" autocomplete="username">
-<input id="password" type="password" placeholder="Mật khẩu" maxlength="100" autocomplete="current-password">
-<div class="row">
-<button onclick="register()">Đăng ký</button>
-<button class="secondary" onclick="login()">Đăng nhập</button>
-</div>
-</div>
-<div id="loggedIn" class="hidden">
-<p>Xin chào, <b id="currentUser"></b>!</p>
-<button class="danger" onclick="logout()">Đăng xuất</button>
-</div>
-<p id="accountMessage" class="small"></p>
-<button class="secondary" onclick="showScreen('homeScreen')">← Quay lại menu</button>
+<section id="account" class="panel hidden">
+ <div class="row" style="justify-content:space-between"><h2>👤 Tài khoản</h2><button onclick="home()">← Menu</button></div>
+ <p id="accountStatus">Chưa đăng nhập.</p>
+ <input id="username" maxlength="24" placeholder="Tên người chơi">
+ <input id="password" type="password" placeholder="Mật khẩu">
+ <div class="row"><button class="primary" onclick="accountAction('login')">Đăng nhập</button><button onclick="accountAction('register')">Đăng ký</button><button onclick="logout()">Đăng xuất</button></div>
+ <p class="small">Đăng nhập trực tuyến yêu cầu API server hoạt động.</p>
 </section>
 
-<section id="rankScreen" class="card hidden">
-<h2>🏆 Bảng xếp hạng</h2>
-<ol id="leaderboard" class="list"><li>Đang tải...</li></ol>
-<button onclick="refreshLeaderboard()">↻ Làm mới</button>
-<button class="secondary" onclick="showScreen('homeScreen')">← Quay lại menu</button>
+<section id="leaderboard" class="panel hidden">
+ <div class="row" style="justify-content:space-between"><h2>🏆 Bảng xếp hạng</h2><button onclick="home()">← Menu</button></div>
+ <button onclick="loadLeaderboard()">🔄 Làm mới</button><ol id="leaderboardList"></ol>
 </section>
 
-<section id="musicScreen" class="card hidden">
-<h2>🎵 Nhạc game</h2>
-<p class="small">Nhạc nền YouTube. Trình duyệt có thể yêu cầu bạn bật nhạc bằng thao tác chạm.</p>
-<button onclick="toggleMusic()" id="musicButton">▶ Bật nhạc</button>
-<div id="musicFrame"></div>
-<hr>
-<button class="secondary" onclick="showScreen('homeScreen')">← Quay lại menu</button>
+<section id="admin" class="panel hidden">
+ <div class="row" style="justify-content:space-between"><h2>🛡️ Quản trị</h2><button onclick="home()">← Menu</button></div>
+ <input id="adminPassword" type="password" placeholder="Mật khẩu quản trị">
+ <div class="row"><button class="primary" onclick="adminLogin()">Đăng nhập</button><button onclick="adminStats()">Thống kê</button></div>
+ <pre id="adminResult" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
+ <p class="small">Mật khẩu phải được xác minh phía server, không đặt mật khẩu bí mật trong HTML.</p>
 </section>
-
-<section id="adminScreen" class="card hidden">
-<h2>🛡️ Quản trị</h2>
-<input id="adminPassword" type="password" placeholder="Mật khẩu quản trị">
-<button onclick="adminLogin()">Đăng nhập quản trị</button>
-<p id="adminMessage" class="small"></p>
-<div id="adminArea" class="hidden">
-<p id="adminStats"></p>
-<button onclick="loadAdminStats()">Cập nhật thống kê</button>
-</div>
-<button class="secondary" onclick="showScreen('homeScreen')">← Quay lại menu</button>
-</section>
-
-<footer>Snake Rivals • Mobile Arena Edition</footer>
 </main>
+<footer>Snake Rivals • Canvas world engine • Mobile edition</footer>
+
+<iframe id="musicFrame" title="Nhạc nền" width="1" height="1"
+ src="https://www.youtube-nocookie.com/embed/n8X9_MgEdCg?enablejsapi=1&autoplay=0&loop=1&playlist=n8X9_MgEdCg"
+ allow="autoplay; encrypted-media" style="position:fixed;left:-20px;bottom:-20px;border:0"></iframe>
 
 <script>
 "use strict";
-
-const $ = id => document.getElementById(id);
-const canvas = $("game");
-const ctx = canvas.getContext("2d");
-const N = 30;
-const CELL = canvas.width/N;
-const FOOD_COUNT = 15;
-const API = "";
-const skins = [
-{name:"Emerald",head:"#b8ffe0",body:"#35e99a",glow:"#27ffac"},
-{name:"Ocean",head:"#b4e8ff",body:"#269df5",glow:"#36baff"},
-{name:"Ruby",head:"#ffc1ca",body:"#fa4569",glow:"#ff4266"},
-{name:"Golden",head:"#fff0a0",body:"#ffbd35",glow:"#ffcb43"},
-{name:"Violet",head:"#e6c2ff",body:"#a55bfa",glow:"#bd75ff"},
-{name:"Shadow",head:"#d4dce5",body:"#596779",glow:"#b4c3d6"},
-{name:"Lime",head:"#e8ff9a",body:"#a5e63c",glow:"#c9ff51"},
-{name:"Candy",head:"#fff0fc",body:"#fa7ed8",glow:"#ff80dc"},
-{name:"Fire",head:"#ffe1a3",body:"#ff762e",glow:"#ff8a3d"}
+const $=id=>document.getElementById(id);
+const API="";
+const WORLD_SIZE=12000;
+const AI_COUNT=50;
+const skins=[
+ {name:"Emerald",color:"#38ff9b",price:0},
+ {name:"Ocean",color:"#35bdff",price:100},
+ {name:"Sunset",color:"#ff8a4e",price:250},
+ {name:"Violet",color:"#c28aff",price:500},
+ {name:"Gold",color:"#ffdc56",price:1000},
+ {name:"Ruby",color:"#ff476d",price:2000},
+ {name:"Galaxy",color:"#70e6ff",price:3500},
+ {name:"Celestial",color:"#ffffff",price:6000}
 ];
-
-let snake=[];
-let foods=[];
-let direction={x:1,y:0};
-let nextDirection={x:1,y:0};
-let score=0;
-let best=Number(localStorage.getItem("snakeBest")||0);
-let timer=null;
-let running=false;
-let paused=false;
-let gameOver=false;
-let currentUsername="";
-let token=localStorage.getItem("snakeToken")||"";
+let best=+(localStorage.getItem("sr_best")||0);
+let coins=+(localStorage.getItem("sr_coins")||0);
+let runCoins=0,score=0;
+let skinName=localStorage.getItem("sr_skin")||"Emerald";
+let unlocked=JSON.parse(localStorage.getItem("sr_unlocked")||'["Emerald"]');
+let playerName=localStorage.getItem("sr_name")||"";
+let sessionToken=localStorage.getItem("sr_token")||"";
 let adminToken="";
-let musicPlaying=false;
-let audioContext=null;
-let selectedSkin=localStorage.getItem("snakeSkin")||"Emerald";
-let particles=[];
-let lastTime=0;
-let swipeStart=null;
-let roundId=0;
-
-function showScreen(id){
-    ["homeScreen","gameScreen","skinScreen","settingsScreen","accountScreen","rankScreen","musicScreen","adminScreen"].forEach(s=>$(s).classList.add("hidden"));
-    $(id).classList.remove("hidden");
-    if(id==="gameScreen") draw();
-    if(id==="skinScreen") renderSkins();
-    if(id==="accountScreen") updateAccountUI();
+let gameRunning=false,paused=false,boost=false;
+let musicOn=true,shieldUntil=0,shieldCooldown=0;
+let speedMode="normal",fxMode="high";
+let world=[],foods=[],coinItems=[],chests=[],obstacles=[],decor=[],particles=[];
+let snake=null,aiSnakes=[],camera={x:WORLD_SIZE/2,y:WORLD_SIZE/2};
+let lastTime=0,accumulator=0,frame=0;
+let targetAngle=0,mouseSteer=false,touchStart=null;
+const canvas=$("game"),ctx=canvas.getContext("2d");
+const map=$("map"),mctx=map.getContext("2d");
+const musicFrame=$("musicFrame");
+const TAU=Math.PI*2;
+const rand=(a,b)=>a+Math.random()*(b-a);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+const angleDiff=(a,b)=>Math.atan2(Math.sin(b-a),Math.cos(b-a));
+const choice=a=>a[Math.floor(Math.random()*a.length)];
+function save(){
+ localStorage.setItem("sr_best",best);
+ localStorage.setItem("sr_coins",coins);
+ localStorage.setItem("sr_skin",skinName);
+ localStorage.setItem("sr_unlocked",JSON.stringify(unlocked));
 }
-
-function updateAccountUI(){
-    if(token&&currentUsername){
-        $("loggedOut").classList.add("hidden");
-        $("loggedIn").classList.remove("hidden");
-        $("currentUser").textContent=currentUsername;
-    }else{
-        $("loggedOut").classList.remove("hidden");
-        $("loggedIn").classList.add("hidden");
-    }
+function show(id){
+ ["home","gamePanel","skins","settings","account","leaderboard","admin"].forEach(k=>$(k).classList.add("hidden"));
+ $(id).classList.remove("hidden");
+ if(id==="skins")renderSkins();
+ if(id==="account")updateAccount();
 }
-
-function getSkin(){
-    return skins.find(s=>s.name===selectedSkin)||skins[0];
+function home(){
+ gameRunning=false;paused=false;boost=false;
+ $("centerMessage").textContent="";
+ show("home");updateHome();
 }
-
+function updateHome(){
+ $("best").textContent=best;$("coins").textContent=coins;$("skinName").textContent=skinName;
+}
+function msg(t){$("message").textContent=t}
+function saveSettings(){
+ speedMode=$("speedSetting").value;fxMode=$("fxSetting").value;
+ msg("Đã lưu cài đặt.");if(gameRunning)draw();
+}
 function renderSkins(){
-    const grid=$("skinGrid");
-    grid.innerHTML="";
-    skins.forEach(skin=>{
-        const button=document.createElement("button");
-        button.className="skin"+(skin.name===selectedSkin?" selected":"");
-        const ball=document.createElement("div");
-        ball.className="skinBall";
-        ball.style.background=skin.body;
-        ball.style.boxShadow="inset -5px -5px 9px #0005,0 0 12px "+skin.glow;
-        const name=document.createElement("b");
-        name.textContent=skin.name;
-        const desc=document.createElement("small");
-        desc.textContent=skin.name===selectedSkin?"✓ Đang sử dụng":"Chọn skin";
-        button.append(ball,name,desc);
-        button.onclick=()=>{
-            selectedSkin=skin.name;
-            localStorage.setItem("snakeSkin",selectedSkin);
-            updateSkinUI();
-            renderSkins();
-            draw();
-        };
-        grid.appendChild(button);
-    });
+ const grid=$("skinGrid");grid.innerHTML="";
+ skins.forEach(s=>{
+  const owned=unlocked.includes(s.name),div=document.createElement("div");
+  div.className="skin"+(skinName===s.name?" selected":"");
+  const sw=document.createElement("div");sw.className="swatch";sw.style.background=s.color;
+  const name=document.createElement("b");name.textContent=s.name;
+  const p=document.createElement("p");p.className="small";p.textContent=owned?"Đã mở khóa":"Điểm cao nhất cần: "+s.price;
+  const b=document.createElement("button");b.textContent=owned?(skinName===s.name?"Đang dùng":"Chọn"):"Mở khóa";
+  b.onclick=()=>{
+   if(!owned){
+    if(best<s.price){alert("Hãy đạt điểm cao nhất "+s.price+" trước.");return}
+    unlocked.push(s.name);
+   }
+   skinName=s.name;save();renderSkins();updateHome();draw();
+  };
+  div.append(sw,name,p,b);grid.appendChild(div);
+ });
 }
-
-function updateSkinUI(){
-    const skin=getSkin();
-    $("skinName").textContent=skin.name;
-    $("currentSkinName").textContent=skin.name;
-    $("currentSkinPreview").style.background=skin.body;
-    $("currentSkinPreview").style.boxShadow="0 0 14px "+skin.glow;
+function makeSnake(x,y,isAI=false,id=0){
+ const angle=rand(0,TAU),length=isAI?Math.floor(rand(7,19)):10;
+ const body=[];
+ for(let i=0;i<length;i++)body.push({x:x-Math.cos(angle)*i*9,y:y-Math.sin(angle)*i*9});
+ return {x,y,angle,body,isAI,id,alive:true,color:isAI?choice(["#ff5b72","#48c9ff","#ffcf56","#bd83ff","#ff8e4e","#69ff8f"]):(skins.find(s=>s.name===skinName)?.color||"#38ff9b"),size:length,score:0,think:0,target:null,shield:0,boost:0};
 }
-
-function occupied(x,y){
-    return snake.some(p=>p.x===x&&p.y===y)||
-           foods.some(p=>p.x===x&&p.y===y);
+function randomPoint(margin=300){return {x:rand(margin,WORLD_SIZE-margin),y:rand(margin,WORLD_SIZE-margin)}}
+function initWorld(){
+ foods=[];coinItems=[];chests=[];obstacles=[];decor=[];particles=[];
+ for(let i=0;i<850;i++){let p=randomPoint();foods.push({...p,r:rand(4,8),value:Math.random()<.08?5:1,hue:rand(80,180)})}
+ for(let i=0;i<220;i++)coinItems.push({...randomPoint(),r:7,value:Math.random()<.12?10:1});
+ for(let i=0;i<28;i++)chests.push({...randomPoint(),r:19,opened:false});
+ for(let i=0;i<260;i++)obstacles.push({...randomPoint(450),r:rand(16,42),type:choice(["rock","tree","crystal"])});
+ for(let i=0;i<900;i++)decor.push({...randomPoint(80),type:choice(["grass","flower","stone"]),r:rand(2,7),hue:rand(0,360)});
 }
-
-function newFood(){
-    const free=[];
-    for(let y=1;y<N-1;y++){
-        for(let x=1;x<N-1;x++){
-            if(!occupied(x,y)) free.push({x,y});
-        }
-    }
-    if(!free.length) return null;
-    return free[Math.floor(Math.random()*free.length)];
-}
-
-function placeFood(){
-    foods=[];
-    for(let i=0;i<FOOD_COUNT;i++){
-        const f=newFood();
-        if(f) foods.push(f);
-    }
-    updateFoodUI();
-}
-
-function updateFoodUI(){
-    $("foodCount").textContent=foods.length;
-}
-
-function resetGame(){
-    snake=[
-        {x:15,y:15},
-        {x:14,y:15},
-        {x:13,y:15}
-    ];
-    direction={x:1,y:0};
-    nextDirection={x:1,y:0};
-    score=0;
-    paused=false;
-    gameOver=false;
-    particles=[];
-    $("score").textContent="0";
-    $("best").textContent=best;
-    $("length").textContent=snake.length;
-    $("message").textContent="Ăn thức ăn và phát triển rắn!";
-    placeFood();
-    showOverlay("🐍 SẴN SÀNG","Nhấn BẮT ĐẦU để vào đấu trường.", "BẮT ĐẦU",startGame);
-    draw();
-}
-
 function startGame(){
-    clearInterval(timer);
-    roundId++;
-    resetGame();
-    running=true;
-    paused=false;
-    $("overlay").classList.add("hidden");
-    $("message").textContent="Đang chơi — cố gắng đạt kỷ lục mới!";
-    timer=setInterval(tick,Number($("speed").value)||120);
-    showScreen("gameScreen");
-    $("overlay").classList.add("hidden");
+ show("gamePanel");initWorld();
+ const p={x:WORLD_SIZE/2,y:WORLD_SIZE/2};
+ snake=makeSnake(p.x,p.y,false);
+ aiSnakes=[];
+ if($("aiToggle").checked){
+  for(let i=0;i<AI_COUNT;i++){
+   let q;do{q=randomPoint(900)}while(Math.hypot(q.x-p.x,q.y-p.y)<1200);
+   aiSnakes.push(makeSnake(q.x,q.y,true,i));
+  }
+ }
+ score=0;runCoins=0;shieldUntil=0;shieldCooldown=0;targetAngle=snake.angle;
+ camera.x=snake.x;camera.y=snake.y;
+ gameRunning=true;paused=false;boost=false;lastTime=performance.now();accumulator=0;
+ $("centerMessage").textContent="";
+ updateStats();playMusic();requestAnimationFrame(loop);
 }
-
-function showOverlay(title,desc,buttonText,callback){
-    $("overlay").classList.remove("hidden");
-    $("overlay").innerHTML="";
-    const box=document.createElement("div");
-    const h=document.createElement("h2");
-    h.textContent=title;
-    const p=document.createElement("p");
-    p.textContent=desc;
-    const b=document.createElement("button");
-    b.textContent=buttonText;
-    b.onclick=callback;
-    box.append(h,p,b);
-    $("overlay").appendChild(box);
+function updateStats(){
+ $("score").textContent=score;
+ $("length").textContent=snake?snake.body.length:10;
+ $("runCoins").textContent=runCoins;
+ $("aiAlive").textContent=aiSnakes.filter(a=>a.alive).length;
+ $("speedHUD").textContent="Tốc độ: "+(boost?"2×":"1×");
+ $("shieldHUD").textContent=Date.now()<shieldUntil?"🛡️ Khiên: Đang bật":Date.now()<shieldCooldown?"🛡️ Khiên: Hồi chiêu":"🛡️ Khiên: Sẵn sàng";
 }
-
-function pauseGame(){
-    if(!running||gameOver) return;
-    paused=!paused;
-    if(paused){
-        clearInterval(timer);
-        timer=null;
-        $("message").textContent="Đã tạm dừng.";
-        showOverlay("⏸ TẠM DỪNG","Ván chơi đang tạm dừng.","TIẾP TỤC",pauseGame);
-    }else{
-        $("overlay").classList.add("hidden");
-        $("message").textContent="Tiếp tục chơi!";
-        timer=setInterval(tick,Number($("speed").value)||120);
-    }
+function steer(delta){if(!snake||!gameRunning||paused)return;targetAngle=snake.angle+delta*0.48}
+function activateShield(){
+ const now=Date.now();
+ if(!gameRunning||paused)return;
+ if(now<shieldCooldown){msg("Khiên đang hồi chiêu!");return}
+ shieldUntil=now+3500;shieldCooldown=now+12000;
+ for(let i=0;i<36;i++)particles.push({x:snake.x,y:snake.y,vx:rand(-130,130),vy:rand(-130,130),life:1,color:"#63e9ff",r:rand(2,5)});
 }
-
-function returnHome(){
-    clearInterval(timer);
-    timer=null;
-    running=false;
-    paused=false;
-    showScreen("homeScreen");
+function eatSound(){
+ if(!$("soundToggle").checked)return;
+ try{
+  const A=window.AudioContext||window.webkitAudioContext;
+  const ac=eatSound.ac||(eatSound.ac=new A());
+  if(ac.state==="suspended")ac.resume();
+  const o=ac.createOscillator(),g=ac.createGain();
+  o.frequency.setValueAtTime(500,ac.currentTime);
+  o.frequency.exponentialRampToValueAtTime(950,ac.currentTime+.09);
+  g.gain.setValueAtTime(.07,ac.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.13);
+  o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.14);
+ }catch(e){}
 }
-
-function setDirection(x,y){
-    if(!running||paused||gameOver) return;
-    if(x===-direction.x&&y===-direction.y) return;
-    nextDirection={x,y};
+function burst(x,y,color,count=18){
+ const n=fxMode==="low"?Math.ceil(count/3):count;
+ for(let i=0;i<n;i++)particles.push({x,y,vx:rand(-190,190),vy:rand(-190,190),life:rand(.4,1),color,r:rand(2,5)});
 }
-
-document.addEventListener("keydown",e=>{
-    const map={
-        ArrowUp:[0,-1],w:[0,-1],W:[0,-1],
-        ArrowDown:[0,1],s:[0,1],S:[0,1],
-        ArrowLeft:[-1,0],a:[-1,0],A:[-1,0],
-        ArrowRight:[1,0],d:[1,0],D:[1,0]
-    };
-    if(map[e.key]){
-        e.preventDefault();
-        setDirection(...map[e.key]);
-    }
-    if(e.key===" "){
-        e.preventDefault();
-        if(running) pauseGame();
-    }
-});
-
-canvas.addEventListener("pointerdown",e=>{
-    swipeStart={x:e.clientX,y:e.clientY};
-});
-canvas.addEventListener("pointerup",e=>{
-    if(!swipeStart) return;
-    const dx=e.clientX-swipeStart.x;
-    const dy=e.clientY-swipeStart.y;
-    if(Math.max(Math.abs(dx),Math.abs(dy))>18){
-        if(Math.abs(dx)>Math.abs(dy)){
-            setDirection(dx>0?1:-1,0);
-        }else{
-            setDirection(0,dy>0?1:-1);
-        }
-    }
-    swipeStart=null;
-});
-
-function tick(){
-    if(!running||paused||gameOver) return;
-    direction={...nextDirection};
-    const head={x:snake[0].x+direction.x,y:snake[0].y+direction.y};
-
-    if(head.x<1||head.x>=N-1||head.y<1||head.y>=N-1){
-        endGame();
-        return;
-    }
-
-    const foodIndex=foods.findIndex(f=>f.x===head.x&&f.y===head.y);
-    const eating=foodIndex!==-1;
-    const checkBody=eating?snake:snake.slice(0,-1);
-
-    if(checkBody.some(p=>p.x===head.x&&p.y===head.y)){
-        endGame();
-        return;
-    }
-
-    snake.unshift(head);
-
-    if(eating){
-        score+=10;
-        $("score").textContent=score;
-        const eaten=foods[foodIndex];
-        createParticles(eaten.x,eaten.y);
-        foods.splice(foodIndex,1);
-        const f=newFood();
-        if(f) foods.push(f);
-        playEatSound();
-        updateFoodUI();
-
-        if(score>best){
-            best=score;
-        
+function dropLoot(x,y){
+ for(let i=0;i<4;i++)foods.push({x:x+rand(-30,30),y:y+rand(-30,30),r:rand(4,7),value:1,hue:rand(40,180)});
+ if(Math.random()<.65)coinItems.push({x,y,r:7,value:1});
+ if(Math.random()<.08)chests.push({x,y,r:19,opened:false});
+}
+function die(s){
+ if(!s.alive)return;
+ s.alive=false;
+ for(let i=0;i<s.body.length;i+=2)dropLoot(s.body[i].x,s.body[i].y);
+ burst(s.x,s.y,s.color,65);
+}
+function nearest(list,p){
+ let bestItem=null,bd=Infinity;
+ for(const a of list){const d=Math.hypot(a.x-p.x,a.y-p.y);if(d<bd){bd=d;bestItem=a}}
+ return bestItem;
+}
+function aiThink(a,dt){
+ a.think-=dt;if(a.think>0)return;
+ a.think=rand(.12,.3);
+ let target=nearest(foods,a);
+ if(target){
+  const danger=obstacles.filter(o=>Math.hypot(o.x-a.x,o.y-a.y)<170);
+  let avoidX=0,avoidY=0;
+  danger.forEach(o=>{let dx=a.x-o.x,dy=a.y-o.y,d=Math.max(1,Math.hypot(dx,dy));avoidX+=dx/d/d*120;avoidY+=dy/d/d*120});
+  let desired=Math.atan2(target.y+avoidY-a.y,target.x+avoidX-a.x);
+  // Độ khó Khó: AI điều chỉnh hướng nhanh và tránh vật cản tốt hơn.
+  const diff=angleDiff(a.angle,desired);
+  a.angle+=clamp(diff,-2.6,2.6)*.7;
+  if(Math.random()<.18)a.boost=.5;
+ }
+ if(a.x<500||a.x>WORLD_SIZE-500||a.y<500||a.y>WORLD_SIZE-500){
+  a.angle=Math.atan2(WORLD_SIZE/2-a.y,WORLD_SIZE/2-a.x);
+ }
+}
+function moveSnake(s,dt,isPlayer=false){
+ if(!s.alive)return;
+ let speed=isPlayer?205:rand(115,155);
+ if(isPlayer&&speedMode==="slow")speed*=.7;
+ if(isPlayer&&speedMode==="fast")speed*=1.2;
+ if(isPlayer&&boost)speed*=1.65;
+ if(!isPlayer&&s.boost>0){speed*=1.2;s.boost-=dt}
+ if(isPlayer){
+  const diff=angleDiff(s.angle,targetAngle);
+  s.angle+=clamp(diff,-3.8*dt,3.8*dt);
+ }
+ s.x+=Math.cos(s.angle)*speed*dt;
+ s.y+=Math.sin(s.angle)*speed*dt;
+ s.x=clamp(s.x,35,WORLD_SIZE-35);s.y=clamp(s.y,35,WORLD_SIZE-35);
+ s.body.unshift({x:s.x,y:s.y});
+ const spacing=9;
+ const maxBody=Math.max(10,Math.floor(s.size));
+ while(s.body.length>maxBody)s.body.pop();
+ // Giữ khoảng cách đều giữa các đoạn thân theo quỹ đạo đã di chuyển.
+ for(let i=1;i<s.body.length;i++){
+  const prev=s.body[i-1],cur=s.body[i],d=Math.hypot(cur.x-prev.x,cur.y-prev.y);
+  if(d>spacing){const k=(d-spacing)/d;cur.x+= (prev.x-cur.x)*k;cur.y+=(prev.y-cur.y)*k}
+ }
+}
+function update(dt){
+ if(!snake||!snake.alive){finish();return}
+ const now=Date.now();
+ moveSnake(snake,dt,true);
+ aiSnakes.forEach(a=>{if(a.alive){aiThink(a,dt);moveSnake(a,dt,false)}});
+ const all=[snake,...aiSnakes.filter(a=>a.alive)];
+ // Ăn thức ăn.
+ for(let i=foods.length-1;i>=0;i--){
+  const f=foods[i];
+  if(Math.hypot(f.x-snake.x,f.y-snake.y)<snake.size*.7+f.r+7){
+   foods.splice(i,1);score+=f.value*10;snake.size+=f.value*.18;
+   snake.score+=f.value*10;burst(f.x,f.y,`hsl(${f.hue},100%,65%)`,16);eatSound();
+   if(foods.length<600)for(let j=0;j<2;j++)foods.push({...randomPoint(),r:rand(4,8),value:1,hue:rand(80,180)});
+   if(score>best){best=score;localStorage.setItem("sr_best",best);$("best").textContent=best}
+  }
+ }
+ for(let i=coinItems.length-1;i>=0;i--){
+  const c=coinItems[i];
+  if(Math.hypot(c.x-snake.x,c.y-snake.y)<30){
+   coins+=c.value;runCoins+=c.value;coinItems.splice(i,1);burst(c.x,c.y,"#ffd84d",12);save();
+   if(coinItems.length<160)coinItems.push({...randomPoint(),r:7,value:1});
+  }
+ }
+ for(const chest of chests){
+  if(!chest.opened&&Math.hypot(chest.x-snake.x,chest.y-snake.y)<40){
+   chest.opened=true;const reward=Math.floor(rand(15,65));coins+=reward;runCoins+=reward;score+=50;save();
+   burst(chest.x,chest.y,"#ffce54",42);msg("🎁 Mở rương! +"+reward+" xu");
+  }
+ }
+ if(now>shieldUntil){
+  // Va chạm chướng ngại vật.
+  for(const o of obstacles){
+   if(Math.hypot(o.x-snake.x,o.y-snake.y)<o.r+snake.size*.35){
+    if(now>shieldCooldown){finish();return}
+    targetAngle+=rand(1.2,2.2);
+   }
+  }
+  // Va chạm thân rắn khác.
+  for(const a of aiSnakes){
+   if(!a.alive)continue;
+   for(let i=4;i<a.body.length;i+=3){
+    if(Math.hypot(a.body[i].x-snake.x,a.body[i].y-snake.y)<snake.size*.35+8){finish();return}
+   }
+  }
+ }
+ // AI ăn thức ăn và va chạm được xử lý riêng.
+ for(const a of aiSnakes){
+  if(!a.alive)continue;
+  for(let i=foods.length-1;i>=0;i--){
+   const f=foods[i];
+   if(Math.hypot(f.x-a.x,f.y-a.y)<16){
+    foods.splice(i,1);a.size+=.2;a.score+=10;burst(f.x,f.y,a.color,5);
+    if(foods.length<600)foods.push({...randomPoint(),r:6,value:1,hue:120});
+    break;
+   }
+  }
+  for(const o of obstacles){
+   if(Math.hypot(o.x-a.x,o.y-a.y)<o.r+9){a.angle+=rand(1,2.5);break}
+  }
+  for(let i=0;i<a.body.length-5;i+=4){
+   if(Math.hypot(a.body[i].x-a.x,a.body[i].y-a.y)<10){a.angle+=rand(1,2);break}
+  }
+  if(Math.random()<.001)die(a);
+ }
+ // Rắn AI chạm vào người chơi sẽ bị đánh bại nếu người chơi có khiên.
+ for(const 
