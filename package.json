@@ -1,19 +1,12 @@
 {
-  "name": "snake-rivals-admin-server",
-  "version": "2.0.0",
-  "description": "Snake Rivals 3D multiplayer backend and admin dashboard",
+  "name": "snake-rivals",
+  "version": "1.0.0",
+  "description": "Snake Rivals game",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "engines": {
-    "node": ">=18"
-  },
   "dependencies": {
-    "express": "^4.21.2",
-    "express-session": "^1.18.1",
-    "socket.io": "^4.8.1",
-    "nodemailer": "^6.10.0",
-    "helmet": "^8.0.0"
+    "express": "^4.21.2"
   }
 }
